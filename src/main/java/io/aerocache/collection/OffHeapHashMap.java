@@ -99,6 +99,11 @@ public final class OffHeapHashMap implements Closeable {
                 long existingKeyPtr = UnsafeAccess.getLong(slotAddr + OFFSET_KEY_PTR);
 
                 if (UnsafeAccess.memoryEquals(existingKeyPtr, existingKeyLen, keyAddr, keyLen)) {
+                    // Reclaim previous value memory before overwriting
+                    long oldValPtr = UnsafeAccess.getLong(slotAddr + OFFSET_VAL_PTR);
+                    int oldValLen = UnsafeAccess.getInt(slotAddr + OFFSET_VAL_LEN);
+                    arena.free(oldValPtr, oldValLen);
+
                     // Update existing key
                     long persistentValPtr = arena.allocate(valLen);
                     UnsafeAccess.copyMemory(valAddr, persistentValPtr, valLen);
@@ -145,7 +150,12 @@ public final class OffHeapHashMap implements Closeable {
                 if (UnsafeAccess.memoryEquals(existingKeyPtr, existingKeyLen, keyAddr, keyLen)) {
                     long expireAt = UnsafeAccess.getLong(slotAddr + OFFSET_EXPIRE_AT);
                     if (expireAt > 0 && now > expireAt) {
-                        // Key has expired; mark as tombstone
+                        // Key has expired; reclaim off-heap memory and mark as tombstone
+                        long oldValPtr = UnsafeAccess.getLong(slotAddr + OFFSET_VAL_PTR);
+                        int oldValLen = UnsafeAccess.getInt(slotAddr + OFFSET_VAL_LEN);
+                        arena.free(existingKeyPtr, existingKeyLen);
+                        arena.free(oldValPtr, oldValLen);
+
                         UnsafeAccess.putLong(slotAddr + OFFSET_HASH, TOMBSTONE_HASH);
                         size--;
                         tombstones++;
@@ -186,6 +196,12 @@ public final class OffHeapHashMap implements Closeable {
                 long existingKeyPtr = UnsafeAccess.getLong(slotAddr + OFFSET_KEY_PTR);
 
                 if (UnsafeAccess.memoryEquals(existingKeyPtr, existingKeyLen, keyAddr, keyLen)) {
+                    // Reclaim off-heap key and value memory back to segregated free lists
+                    long oldValPtr = UnsafeAccess.getLong(slotAddr + OFFSET_VAL_PTR);
+                    int oldValLen = UnsafeAccess.getInt(slotAddr + OFFSET_VAL_LEN);
+                    arena.free(existingKeyPtr, existingKeyLen);
+                    arena.free(oldValPtr, oldValLen);
+
                     UnsafeAccess.putLong(slotAddr + OFFSET_HASH, TOMBSTONE_HASH);
                     size--;
                     tombstones++;

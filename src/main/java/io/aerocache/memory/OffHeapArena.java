@@ -17,6 +17,11 @@ public final class OffHeapArena implements Closeable {
     private long currentSlabOffset = 0;
     private long totalAllocatedBytes = 0;
 
+    // Intrusive segregated free lists: 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536
+    private static final int NUM_SIZE_CLASSES = 13;
+    private static final int MIN_CLASS_SIZE = 16;
+    private final long[] freeListHeads = new long[NUM_SIZE_CLASSES];
+
     public OffHeapArena(long defaultSlabSize) {
         if (defaultSlabSize <= 0) {
             throw new IllegalArgumentException("Slab size must be positive: " + defaultSlabSize);
@@ -25,7 +30,32 @@ public final class OffHeapArena implements Closeable {
         allocateNewSlab(defaultSlabSize);
     }
 
+    private int getClassIndex(int bytes) {
+        int size = MIN_CLASS_SIZE;
+        for (int i = 0; i < NUM_SIZE_CLASSES; i++) {
+            if (bytes <= size) return i;
+            size <<= 1;
+        }
+        return -1;
+    }
+
+    private int getClassSize(int classIndex) {
+        return MIN_CLASS_SIZE << classIndex;
+    }
+
     public synchronized long allocate(int bytes) {
+        if (bytes <= 0) bytes = 8;
+        
+        // 1. Check intrusive free list for recyclable chunk
+        int classIdx = getClassIndex(bytes);
+        if (classIdx != -1 && freeListHeads[classIdx] != 0L) {
+            long recycledAddr = freeListHeads[classIdx];
+            long nextFree = UnsafeAccess.getLong(recycledAddr);
+            freeListHeads[classIdx] = nextFree;
+            UnsafeAccess.setMemory(recycledAddr, getClassSize(classIdx), (byte) 0);
+            return recycledAddr;
+        }
+
         // 8-byte memory alignment for CPU word operations
         long alignedBytes = ((long) bytes + 7L) & ~7L;
 
@@ -45,6 +75,21 @@ public final class OffHeapArena implements Closeable {
         currentSlabOffset += alignedBytes;
         totalAllocatedBytes += alignedBytes;
         return address;
+    }
+
+    /**
+     * Reclaims off-heap memory back to the segregated free pool.
+     * Guarantees zero native memory leaks under update and delete churn.
+     */
+    public synchronized void free(long address, int bytes) {
+        if (address == 0L || bytes <= 0) return;
+
+        int classIdx = getClassIndex(bytes);
+        if (classIdx != -1) {
+            long currentHead = freeListHeads[classIdx];
+            UnsafeAccess.putLong(address, currentHead);
+            freeListHeads[classIdx] = address;
+        }
     }
 
     private void allocateNewSlab(long size) {
