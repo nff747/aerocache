@@ -239,6 +239,11 @@ public final class OffHeapHashMap implements Closeable {
                 if (UnsafeAccess.memoryEquals(existingKeyPtr, existingKeyLen, keyAddr, keyLen)) {
                     long expireAt = UnsafeAccess.getLong(slotAddr + OFFSET_EXPIRE_AT);
                     if (expireAt > 0 && now > expireAt) {
+                        long oldValPtr = UnsafeAccess.getLong(slotAddr + OFFSET_VAL_PTR);
+                        int oldValLen = UnsafeAccess.getInt(slotAddr + OFFSET_VAL_LEN);
+                        arena.free(existingKeyPtr, existingKeyLen);
+                        arena.free(oldValPtr, oldValLen);
+
                         UnsafeAccess.putLong(slotAddr + OFFSET_HASH, TOMBSTONE_HASH);
                         size--;
                         tombstones++;
@@ -271,7 +276,13 @@ public final class OffHeapHashMap implements Closeable {
             if (hash != EMPTY_HASH && hash != TOMBSTONE_HASH) {
                 long expireAt = UnsafeAccess.getLong(oldSlotAddr + OFFSET_EXPIRE_AT);
                 if (expireAt > 0 && now > expireAt) {
-                    continue; // Skip expired keys during rehash
+                    long oldKeyPtr = UnsafeAccess.getLong(oldSlotAddr + OFFSET_KEY_PTR);
+                    int oldKeyLen = UnsafeAccess.getInt(oldSlotAddr + OFFSET_KEY_LEN);
+                    long oldValPtr = UnsafeAccess.getLong(oldSlotAddr + OFFSET_VAL_PTR);
+                    int oldValLen = UnsafeAccess.getInt(oldSlotAddr + OFFSET_VAL_LEN);
+                    arena.free(oldKeyPtr, oldKeyLen);
+                    arena.free(oldValPtr, oldValLen);
+                    continue; // Reclaim expired keys during rehash
                 }
 
                 int newIndex = (int) (hash & newMask);
