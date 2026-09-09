@@ -32,17 +32,25 @@ Curious to hear thoughts from systems architects on memory layout and comparison
 
 ---
 
-## 2. Twitter / X Launch Thread
+## 2. Twitter / X Post (Under 280 chars - no subscription needed)
 ```text
-Can Java beat Redis throughput without triggering GC pauses?
+Can Java beat Redis without GC pauses?
 
-Meet AeroCache: An ultra-low latency, zero-allocation in-memory cache server written in Java.
+I built AeroCache: 13M ops/sec in Java 21.
 
-⚡ 13,000,000 ops/sec
-⚡ 0.10 µs P99 latency
-⚡ 0 GC pauses
+- Direct off-heap arena (Unsafe)
+- Segregated free lists (0 leaks)
+- Zero-alloc RESP parser
+- 0.10 µs P99 / 0 GC pauses (MIT)
 
-Here's how we bypassed the JVM garbage collector: 👇
+https://github.com/nff747/aerocache
+
+#java #redis #systemdesign
+```
+
+---
+
+## 3. Twitter / X Full Thread (Optional for threads)
 
 1/4 Direct Off-Heap Arena:
 Keys and values live outside the JVM heap in unmanaged native memory slabs, completely invisible to GC scavengers.
