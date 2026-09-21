@@ -42,7 +42,6 @@ npm start # or python main.py or cargo run
 [![Protocol](https://img.shields.io/badge/Protocol-Redis_RESP2-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/docs/reference/protocol-spec/)
 [![Memory](https://img.shields.io/badge/Memory-Off--Heap_Unsafe-00B4D8?style=for-the-badge)](https://en.wikipedia.org/wiki/Unmanaged_code)
 [![Throughput](https://img.shields.io/badge/Throughput-13.4M+_ops%2Fsec-39D353?style=for-the-badge)](https://github.com/nff747/aerocache)
-[![Powered by nff747](https://img.shields.io/badge/Powered%20by-nff747-111111?style=for-the-badge&logo=github&logoColor=white)](https://github.com/nff747)
 [![License](https://img.shields.io/badge/License-Apache_2.0-7209B7?style=for-the-badge)](LICENSE)
 
 *An ultra-low-latency, zero-allocation in-memory key-value caching server engineered for High-Frequency Trading (HFT) and microsecond-sensitive infrastructure. Implements Redis RESP2 over a single-threaded Java NIO Event Loop, backed by unmanaged native off-heap memory via `sun.misc.Unsafe`.*
@@ -254,34 +253,7 @@ Licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
 This project is 100% open-source software under the **[MIT License](LICENSE)**.
 
 ### 💼 Commercial Use & Free Redistribution
-You are explicitly permitted to use, modify, fork, integrate, package, and sell commercial products or SaaS built using this engine with **one visible attribution requirement**:
-> **Attribution Requirement**: You must include a visible credit to **nff747** in your application (e.g., `Powered by nff747` linking to [https://github.com/nff747](https://github.com/nff747) in your application UI, footer, about modal, or documentation).
-
-```html
-<!-- Example visible footer attribution -->
-<p>Powered by <a href="https://github.com/nff747" target="_blank">nff747</a></p>
-```
-
----
-
-
----
-
----
-## ❤️ Open Source & Attribution
-
-We believe in the power of open-source and want these tools to help you build incredible things! 
-
-If you use this infrastructure in your personal project, startup, or open-source app, all we ask in return is that you include a small, visible credit. It helps us grow the community and allows us to keep building free, high-performance tools for everyone.
-
-Please include the following in your app's "Credits" page, footer, or `README.md`:
-> **Powered by infrastructure built by [nff747](https://github.com/nff747)**
-> 
-> *(Alternatively, just **"Powered by [nff747](https://github.com/nff747)"** is also perfectly fine to make it easier to display!)*
-
-Thank you for being part of the journey! 🚀
-
----
+You are explicitly permitted to use, modify, fork, integrate, package, and sell commercial products or SaaS built using this engine
 
 ## License
 
