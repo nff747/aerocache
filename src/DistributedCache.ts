@@ -9,4 +9,14 @@ export class DistributedCache {
         this.nodes = new Map();
         this.ring = new ConsistentHashing();
     }
+
+    addNode(node: CacheNode): void {
+        this.nodes.set(node.getId(), node);
+        this.ring.addNode(node.getId());
+    }
+
+    removeNode(nodeId: string): void {
+        this.nodes.delete(nodeId);
+        this.ring.removeNode(nodeId);
+    }
 }
