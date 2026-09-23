@@ -1,6 +1,3 @@
-target/
-*.class
+node_modules
+dist
 *.log
-.idea/
-*.iml
-.DS_Store
