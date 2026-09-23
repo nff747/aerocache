@@ -19,4 +19,19 @@ export class DistributedCache {
         this.nodes.delete(nodeId);
         this.ring.removeNode(nodeId);
     }
+
+    set(key: string, value: any, ttlMs: number): void {
+        const nodeId = this.ring.getNode(key);
+        if (nodeId) {
+            this.nodes.get(nodeId)?.set(key, value, ttlMs);
+        }
+    }
+
+    get(key: string): any {
+        const nodeId = this.ring.getNode(key);
+        if (nodeId) {
+            return this.nodes.get(nodeId)?.get(key) || null;
+        }
+        return null;
+    }
 }
