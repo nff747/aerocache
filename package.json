@@ -1,26 +1,34 @@
 {
   "name": "aerocache",
   "version": "1.0.0",
-  "description": "<div align=\"center\">",
-  "main": "index.js",
+  "description": "Distributed consistent-hashing caching engine in TypeScript with configurable TTL and node failover",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nff747/aerocache.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": [
+    "cache",
+    "distributed-cache",
+    "consistent-hashing",
+    "ttl",
+    "lru"
+  ],
+  "author": "nff747",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nff747/aerocache/issues"
   },
   "homepage": "https://github.com/nff747/aerocache#readme",
   "devDependencies": {
-    "@types/node": "^26.6.2",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.1"
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }
