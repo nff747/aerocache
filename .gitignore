@@ -3,3 +3,23 @@ dist/
 target/
 *.log
 .DS_Store
+
+# Security & SCA Hygiene Rules
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+*.pfx
+*.p12
+build/
+out/
+.next/
+*.tsbuildinfo
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+Thumbs.db
