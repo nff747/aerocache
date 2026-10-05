@@ -250,11 +250,11 @@ Licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ## 📜 Open Source & Commercial Use (MIT)
 
-This project is 100% open-source software under the **[MIT License](LICENSE)**.
+This project is 100% open-source software under the **[Apache-2.0 License](LICENSE)**.
 
 ### 💼 Commercial Use & Free Redistribution
 You are explicitly permitted to use, modify, fork, integrate, package, and sell commercial products or SaaS built using this engine
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache-2.0 License](LICENSE).
